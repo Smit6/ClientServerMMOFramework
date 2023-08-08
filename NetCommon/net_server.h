@@ -69,35 +69,35 @@ namespace olc
 					{
 						if (!ec)
 						{
-							//std::cout << "[SERVER] New Connection: " << socket.remote_endpoint() << "\n";
+							std::cout << "[SERVER] New Connection: " << socket.remote_endpoint() << "\n";
 
-							//// Temporarily create a new connection to handle this client
-							//// Shared_ptr 
-							//std::shared_ptr<connection<T>> newconn =
-							//	std::make_shared<connection<T>>
-							//	(
-							//		connection<T>::owner::server,	// Fundamentally owned by a server
-							//		m_asioContext,					// Pass in the current asio context
-							//		std::move(socket),				// Socket provided by the async accept function
-							//		m_qMessagesIn					// Pass by reference the incoming queue of the server
-							//										// Note: only 1 instance of this queue
-							//										// Note: The queue will be shared across all the connection
-							//	);
+							// Temporarily create a new connection to handle this client
+							// Shared_ptr 
+							std::shared_ptr<connection<T>> newconn =
+								std::make_shared<connection<T>>
+								(
+									connection<T>::owner::server,	// Fundamentally owned by a server
+									m_asioContext,					// Pass in the current asio context
+									std::move(socket),				// Socket provided by the async accept function
+									m_qMessagesIn					// Pass by reference the incoming queue of the server
+																	// Note: only 1 instance of this queue
+																	// Note: The queue will be shared across all the connection
+								);
 
-							//// Give the user server a chance to deny connection
-							//if (OnClientConnect(newconn))
-							//{
-							//	// Connection allowed, so add to container of new connections
-							//	m_deqConnections.push_back(std::move(newconn));
-							//	// Valid connections will need to be assigned their ID
-							//	m_deqConnections.back()->ConnectToClient(nIDCounter++);
+							// Give the user server a chance to deny connection
+							if (OnClientConnect(newconn))
+							{
+								// Connection allowed, so add to container of new connections
+								m_deqConnections.push_back(std::move(newconn));
+								// Valid connections will need to be assigned their ID
+								m_deqConnections.back()->ConnectToClient(nIDCounter++);
 
-							//	std::cout << "[" << m_deqConnections.back()->GetID() << "] Connection Approved\n";
-							//}
-							//else
-							//{
-							//	std::cout << "[------] Connection denied!\n";
-							//}
+								std::cout << "[" << m_deqConnections.back()->GetID() << "] Connection Approved\n";
+							}
+							else
+							{
+								std::cout << "[------] Connection denied!\n";
+							}
 						}
 						else
 						{
@@ -143,7 +143,7 @@ namespace olc
 					// Check client is connected
 					if (client && client->IsConnected())
 					{
-						if (client != pIgnoredClient)
+						if (client != pIgnoreClient)
 							client->send(msg);
 					}
 					else
@@ -158,7 +158,7 @@ namespace olc
 					(
 						std::remove(m_deqConnections.begin(), m_deqConnections.end(), nullptr),
 						m_deqConnections.end()
-					)
+					);
 			}
 
 			void Update(size_t nMaxMessages = -1)

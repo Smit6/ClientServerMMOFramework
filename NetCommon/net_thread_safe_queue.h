@@ -33,9 +33,6 @@ namespace olc
 			{
 				std::scoped_lock lock(_mutex);
 				_deque.emplace_back(std::move(item));
-
-				std::unique_lock<std::mutex> ul(_mutex);
-				_condition.notify_one();
 			}
 
 			// Adds an item to front of Queue
@@ -43,9 +40,6 @@ namespace olc
 			{
 				std::scoped_lock lock(_mutex);
 				_deque.emplace_front(std::move(item));
-
-				std::unique_lock<std::mutex> ul(_mutex);
-				_condition.notify_one();
 			}
 
 			// Returns true if Queue has no items
